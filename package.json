@@ -5,10 +5,12 @@
   "main": "server/index.js",
   "scripts": {
     "build": "npm run less && webpack --watch",
+    "dev": "nodemon server/index.js",
     "start": "node server/index.js",
     "less": "lessc src/css/style.less dist/css/style.css",
     "lint": "eslint .",
-    "test": "npm run build && mocha test/setup.js test/*.spec.js"
+    "test": "npm run build && mocha test/setup.js test/*.spec.js",
+    "postinstall": "webpack -p"
   },
   "dependencies": {
     "axios": "^0.16.1",
