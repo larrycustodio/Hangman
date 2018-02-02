@@ -4,6 +4,7 @@ import {
   startGame,
   beginner
 } from './LandingAction';
+import { setTimeout } from 'timers';
 
 export default class Landing extends Component {
   constructor(props) {
@@ -24,35 +25,42 @@ export default class Landing extends Component {
     dispatch(beginner(e.target.value));
   }
 
-  setDisplayTitle(title){
-    // Create an object container to store randomized delays
-    const setDelayProps = {};
-    for(let charIndex in title.split('')){
-      // Check if setDelayProps already already exists
-      if(setDelayProps[title[charIndex]] == undefined){
-        setDelayProps[title[charIndex]] = charIndex * 200 + 500;
-      }
-    }
-
-    // Map out title for rendering
-    return title.split('').map((letter,index) => (
-      <span key={letter + '-' + index}
-      className='animate popIn px-1'
-      style={{ animationDelay: `${setDelayProps[letter]}ms` }}>
-      
-      {letter.toUpperCase()}
-      
-      </span>
-    ))
+  componentDidMount() {
+    this.setDisplayTitle();
   }
+  setDisplayTitle(){
+    const characterDelays = [
+      {char:'h', timeDelay: 1000},
+      {char:'a', timeDelay: 200},
+      {char:'g', timeDelay: 400},
+      {char:'n', timeDelay: 800},
+      {char:'m', timeDelay: 1400},
+    ];
 
+    function setCharacterDelay(elem, delay){
+      const letter = elem.dataset.charBlock;
+      return setTimeout(()=>{
+        elem.innerText = letter;
+      }, delay);
+    }
+    // Select title character blocks
+    const letterBlocks = document.querySelectorAll(".title__char-block");
+    for(let block of letterBlocks){
+      const {charBlock} = block.dataset;
+      const delayInterval = characterDelays.filter(prop =>(prop.char == charBlock));
+      setCharacterDelay(block, delayInterval[0].timeDelay);
+    }
+  }
   render() {
     return (
       <div className='text-center text-white'>
         <h1 className='hangman'>
         {
-          // Map out title + set delays on a separate method
-          this.setDisplayTitle('hangman')
+          "hangman".split("").map((letter,index)=>(
+            <span key={letter + '-' + index}
+                  data-char-block={letter}
+                  className="title__char-block mx-2">_</span>
+          ))
         }
         </h1>
         <h3>Let's play a game...</h3>
